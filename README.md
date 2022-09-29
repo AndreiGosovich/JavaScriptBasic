@@ -1,2 +1,0 @@
-# JavaScriptBasic
-For homework
