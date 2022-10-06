@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homework</title>
+</head>
+<body>
+<!--
+  С этого урока начинаем работать с функционалом интернет-магазина.
+  Предположим, есть сущность корзины. Нужно реализовать функционал подсчета 
+  стоимости корзины в зависимости от находящихся в ней товаров.
+-->
+<script>
+  "use strict";
+
+  let basket = [
+    {
+      id: 1,
+      name: 'prodct 1',
+      price: 100,
+    },
+    {
+      id: 2,
+      name: 'prodct 2',
+      price: 10,
+    },
+    {
+      id: 3,
+      name: 'prodct 3',
+      price: 1000,
+    },
+  ]
+
+  console.log('В корзане товаров на сумму:', countBasketPrice(basket));
+
+  /**
+   * Подсчёт стоимости товаров в корзине
+   * @param {object} basket - объект корзины
+   * @return {number} - сумма товаров в корзине
+  */
+  function countBasketPrice (basket) {
+    let result = 0;
+    for (let product of basket) {
+      result += product.price;
+    }
+    return result;
+  }
+</script>
+</body>
+</html>
