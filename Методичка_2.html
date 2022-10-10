@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методичка 1</title>
+</head>
+<body>
+    <!--     
+        Продолжить работу с интернет-магазином:
+        a. В прошлом домашнем задании вы реализовали корзину на базе массивов.
+        Какими объектами можно заменить их элементы?
+        b. Реализуйте такие объекты.
+        c. Перенести функционал подсчета корзины на объектно-ориентированную базу
+     -->
+    <script>
+        "use strict";
+
+        let product_1 = {
+            id: 1,
+            name: 'prod 1',
+            price: 100
+        };
+        let product_2 = {
+            id: 2,
+            name: 'prod 2',
+            price: 10
+        };
+        let product_3 = {
+            id: 3,
+            name: 'prod 3',
+            price: 1000
+        }
+
+        let basket = {
+            goods: [
+                product_1,
+                product_2,
+                product_3
+            ],
+            calcBasketPrice: function () {
+                let result = 0;
+                for (let product of this.goods) {
+                    result += product.price;
+                }
+                return result;
+            }
+        }
+
+        console.log('Корзина: ', basket);
+        console.log('Стоимость товаров в корзине:', basket.calcBasketPrice());
+    </script>
+</body>
+</html>
