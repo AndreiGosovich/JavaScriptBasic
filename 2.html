@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homework</title>
+</head>
+<body>
+<!--
+Необязательное задание, но желательно сделать.
+
+Необходимо данное задание выполнить в es5 стиле и в es6 стиле.
+Необходимо создать функцию-конструктор/класс для поста в социальной сети.
+Названия: `PostES5` для es5 стиля и `PostES6` для es6 стиля.
+Пост должен хранить:
+1. Автора поста (имени достаточно).
+2. Текст поста.
+3. Дату и время последнего изменения поста.
+Данные автора поста и текст поста необходимо передавать при создании
+экземпляра объекта.
+Каждому экземпляру объекта должен быть доступен метод `edit`, который будет
+менять текст поста.
+
+---
+
+Необходимо создать функцию-конструктор/класс для закрепленного поста в
+социальной сети.
+Названия: `AttachedPostES5` для es5 стиля и `AttachedPostES6` для es6 стиля.
+Закрепленный пост должен наследоваться от обычного поста.
+Данные автора поста и текст поста необходимо передавать при создании
+экземпляра объекта.
+Закрепленный пост должен иметь свойство `highlighted`, в котором по умолчанию
+будет лежать значение false (это свойство будет обозначать, будет ли наш
+закрепленный пост подсвечен).
+У экземпляров объекта закрепленного поста должен быть метод с названием
+`makeTextHighlighted`, который сделает так, чтобы наш пост стал подсвеченным
+(будет менять свойство `highlighted`).
+
+---
+
+Подсказки:
+1. Задание сложное, советую делать по аналогии с примером на онлайн-занятии.
+2. Обратите внимание что пост хранит "дату и время последнего изменения
+поста", это значит что если пост кто-то изменит (например вызовет какой-то
+метод, который изменит что-то в посте), дата и время последнего изменения
+поста также должна измениться.
+3. Выполняйте все по порядку, не стоит пытаться сделать все сразу, иначе можно
+что-нибудь пропустить.
+4. Если непонятно условие - задайте вопрос.
+-->
+
+<script>
+  "use strict";
+  /*
+   * ES5 ВАРИАНТ
+  */ 
+
+  /** 
+   * Объект "Пост в соц. сети" (ES5)
+   * @param {string} authorName - Автор поста
+   * @param {string} textPost - Текст поста
+  */
+  function PostES5(authorName, textPost) {
+    this.authorName = authorName;
+    this.textPost = textPost;
+    this.lastChangeDate = new Date();
+  }
+
+  PostES5.prototype.edit = function(newTextPost) {
+    this.textPost = newTextPost;
+    this.lastChangeDate = new Date();
+  };
+
+  /** 
+   * Закреплённый пост (ES5)
+   * @param {string} authorName - Автор поста
+   * @param {string} textPost - Текст поста
+  */
+  function AttachedPostES5(authorName, textPost) {
+    PostES5.call(this, authorName, textPost);
+    this.highlighted = false;
+    this.lastChangeDate = new Date();
+  }
+  
+  AttachedPostES5.prototype = Object.create(PostES5.prototype);
+  AttachedPostES5.prototype.constructor = PostES5;
+
+  AttachedPostES5.prototype.makeTextHighlighted = function(highlighted) {
+    this.highlighted = highlighted;
+    this.lastChangeDate = new Date();
+  };
+
+  console.log('ES5 ВАРИАНТ');
+
+  let post_ES5 = new PostES5('Андрей', 'Lorem ipsum dolor sit amet consectetur \
+adipisicing elit. Qui, minus!');
+  console.log(`${post_ES5.authorName} (${post_ES5.lastChangeDate}): \
+${post_ES5.textPost}.`);
+  post_ES5.edit('Lorem ipsum dolor sit amet consectetur adipisicing elit.')
+  console.log(`${post_ES5.authorName} (${post_ES5.lastChangeDate}) (updated): \
+${post_ES5.textPost}.`);
+
+  let attachedPostES5 = new AttachedPostES5('Ольга', 'Какой-то текст.');
+  console.log(`${attachedPostES5.highlighted ? '!!! ' : ''}\
+${attachedPostES5.authorName} (${attachedPostES5.lastChangeDate}): \
+${attachedPostES5.textPost}.`);
+  attachedPostES5.makeTextHighlighted(true);
+  console.log(`${attachedPostES5.highlighted ? '!!! ' : ''}\
+${attachedPostES5.authorName} (${attachedPostES5.lastChangeDate}): \
+${attachedPostES5.textPost}.`);
+  attachedPostES5.edit('123');
+  console.log(`${attachedPostES5.highlighted ? '!!! ' : ''}\
+${attachedPostES5.authorName} (${attachedPostES5.lastChangeDate}): \
+${attachedPostES5.textPost}.`);
+
+
+/**
+ * ES6 ВАРИАНТ
+ */ 
+class PostES6 {
+    /** 
+     * Объект "Пост в соц. сети" (ES6)
+     * @param {string} authorName - Автор поста
+     * @param {string} textPost - Текст поста
+    */
+    constructor(authorName, textPost) {
+      this.authorName = authorName;
+      this.textPost = textPost;
+      this.lastChangeDate = new Date();
+    }
+
+    edit(newTextPost) {
+      this.textPost = newTextPost;
+      this.lastChangeDate = new Date();
+    };
+  }
+
+  class AttachedPostES6 extends PostES6 {
+    /** 
+     * Закреплённый пост (ES6)
+     * @param {string} authorName - Автор поста
+     * @param {string} textPost - Текст поста
+    */
+    constructor(authorName, textPost) {
+      super(authorName, textPost);
+      this.highlighted = false;
+      this.lastChangeDate = new Date();
+    }
+
+    /**
+     * Подсветить пост
+     * @param {boolean} highlighted - подсветить (true), убрать посветку (false)
+    */
+    makeTextHighlighted(highlighted) {
+      this.highlighted = highlighted;
+      this.lastChangeDate = new Date();
+    };
+  }
+
+  console.log('\nES6 ВАРИАНТ');
+
+  let post_ES6 = new PostES6('Василий', 'Lorem ipsum dolor sit amet consectetur\
+ adipisicing elit. Neque sint odio harum laborum dolorum beatae quis nesciunt, \
+facere veritatis itaque, eos voluptatum tempore atque aliquid deserunt in, \
+distinctio dolores repellendus!');
+
+  console.log(`${post_ES6.authorName} (${post_ES6.lastChangeDate}): \
+${post_ES6.textPost}.`);
+
+  post_ES6.edit('Пост на русском!')
+
+  console.log(`${post_ES6.authorName} (${post_ES6.lastChangeDate}) (updated): \
+${post_ES6.textPost}.`);
+
+
+  let attachedPostES6 = new AttachedPostES6('Валентина', 'Простой пост.');
+
+  console.log(`${attachedPostES6.highlighted ? '!!! ' : ''}\
+${attachedPostES6.authorName} (${attachedPostES6.lastChangeDate}): \
+${attachedPostES6.textPost}.`);
+
+  attachedPostES6.makeTextHighlighted(true);
+
+  console.log(`${attachedPostES6.highlighted ? '!!! ' : ''}\
+${attachedPostES6.authorName} (${attachedPostES6.lastChangeDate}): \
+${attachedPostES6.textPost}.`);
+
+</script>
+</body>
+</html>
