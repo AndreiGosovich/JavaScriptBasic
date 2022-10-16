@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методичка 3</title>
+</head>
+<body>
+    <!--     
+    * Сделать так, чтобы товары в каталоге выводились при помощи JS:
+    a. Создать массив товаров (сущность Product);
+    b. При загрузке страницы на базе данного массива генерировать вывод из него.
+    HTML-код должен содержать только div id=”catalog” без вложенного кода. 
+    Весь вид каталога генерируется JS.
+     -->
+    <div class="catalog" id="catalog">
+
+    </div>
+
+    <script>
+        "use strict";
+
+        const product_1 = {
+            id: 1,
+            name: 'prod 1',
+            price: 100
+        };
+        const product_2 = {
+            id: 2,
+            name: 'prod 2',
+            price: 10
+        };
+        const product_3 = {
+            id: 3,
+            name: 'prod 3',
+            price: 1000
+        }
+
+        const products = [];
+        products.push(product_1);
+        products.push(product_2);
+        products.push(product_3);
+
+        showCatalog(products);
+
+        /**
+         * Вы вести на страничку содержимое каталога
+         * @param (Array) products - массив продуктов
+        */
+        function showCatalog(products) {
+            const elCatalog = document.getElementById("catalog")
+            elCatalog.style.borderCollapse = ('collapse');
+
+            let elProduct;
+            elProduct = document.createElement('div');
+            elProduct.style.display = 'flex';
+            elProduct.style.display = 'table-row';
+
+            let elAttribute;
+            elAttribute = document.createElement('div');
+            elAttribute.style.display = 'table-cell';
+            elAttribute.style.border = '1px solid grey';
+            elAttribute.style.boxSizing = 'border-box';
+            elAttribute.style.padding = '5px';
+
+            let elProductTmp = elProduct.cloneNode();
+            let elAttributeTmp = elAttribute.cloneNode();
+
+            // формируем заголовок
+            elAttributeTmp.textContent = "id";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Название";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Цена";
+            elProductTmp.appendChild(elAttributeTmp);
+            elCatalog.appendChild(elProductTmp);
+            ////
+
+            for (let product of products) {
+                elProductTmp = elProduct.cloneNode();
+                for (let atribute in product) {
+                    elAttributeTmp = elAttribute.cloneNode();
+                    elAttributeTmp.textContent = product[atribute]
+                    elProductTmp.appendChild(elAttributeTmp);
+                }
+                elCatalog.appendChild(elProductTmp);
+            }
+        }
+    </script>
+</body>
+</html>

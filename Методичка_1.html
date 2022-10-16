@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+</head>
+<body>
+    <!-- 
+    Создать функцию, генерирующую шахматную доску.
+    Можно использовать любые html-теги.
+    Доска должна быть верно разлинована на черные и белые ячейки. 
+    Строки должны нумероваться числами от 1 до 8, 
+    столбцы — латинскими буквами A, B, C, D, E, F, G, H
+     -->
+     <script>
+        "use strict";
+
+        const chekMateDesk = createCheckmateDesk();
+
+        document.body.appendChild(chekMateDesk);
+
+        /**
+         * Вывод на страничку шахматной доски
+        */
+        function createCheckmateDesk() {
+            const deskEl = document.createElement('div'); // Доска
+            deskEl.classList.add('desk'); // добавим класс
+            deskEl.style.borderCollapse = ('collapse');
+
+            const rowEl = document.createElement('div'); // строка
+            rowEl.classList.add('desk-row'); // класс
+            rowEl.style.display = 'table-row';
+
+            const cellSize = 30;
+
+            const cellEl = document.createElement('div'); // ячейка
+            cellEl.classList.add('desk-row-cell'); // класс
+            cellEl.style.border = '1px solid grey';
+            cellEl.style.height = cellSize + 'px';
+            cellEl.style.width = cellSize + 'px';
+            cellEl.style.display = 'table-cell';
+            cellEl.style.textAlign = 'center';
+            cellEl.style.boxSizing = 'border-box';
+            cellEl.style.paddingTop = cellSize / 2 - 9 + 'px';
+
+            const countLines = 8;
+            
+            // собирём строку
+            for (let i = 0; i <= countLines; i++) {
+                rowEl.appendChild(cellEl.cloneNode(true));
+            }
+
+            // собирём доску
+            for (let i = 0; i <= countLines; i++) {
+                deskEl.appendChild(rowEl.cloneNode(true));
+            }
+
+            for (let i = 0; i <= countLines; i++) {
+                const currentRow = deskEl.querySelector(`.desk-row:nth-child(${i + 1})`);
+                for (let j = 0; j <= countLines; j++) {
+
+                    ((i === countLines) &&  (j > 0))
+                        ? currentRow.childNodes[j].textContent = String.fromCharCode(64 + j)
+                        : ""; // допишем буквы
+
+                    ((j === 0) && (i < countLines)) 
+                        ? currentRow.childNodes[j].textContent = countLines - i
+                        : ''; // допишем цифры
+                    
+                    ((i === countLines) || (j === 0))
+                        ? currentRow.childNodes[j].style.border = '0'
+                        : ''; // убрать рамки у последней строки и первого столбца
+
+                    (i === countLines)
+                        ? currentRow.childNodes[j].style.height = '0px'
+                        : ''; // уменьшить размер последней строки
+
+                    (j === 0)
+                        ? currentRow.childNodes[j].style.width = '20px'
+                        : ''; // зафиксировать размер первого столбца
+
+                    // для НЕ последней строки и первого столбца
+                    if (i < countLines && j > 0){
+                        // если строка и стоблец одновременно чётные 
+                        // или одновременно не чётные, то покрасить в серый фон.
+                        if (((i % 2) && (j % 2)) || (!(i % 2) && !(j % 2))) {
+                            currentRow.childNodes[j].style.backgroundColor = 'grey';
+                        }
+                    }
+                }
+            }
+            return deskEl;
+        }
+     </script>
+</body>
+</html>

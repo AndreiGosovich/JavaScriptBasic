@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методичка 2</title>
+</head>
+<body>
+    <!--     
+    Сделать генерацию корзины динамической: 
+    верстка корзины не должна находиться в HTML-структуре. 
+    Там должен быть только div, в который будет вставляться корзина,
+    сгенерированная на базе JS:
+        a. Пустая корзина должна выводить строку «Корзина пуста»;
+        b. Наполненная должна выводить «В корзине: n товаров на сумму m рублей».
+     -->
+    <div class="basket">
+
+    </div>
+
+    <script>
+        "use strict";
+
+        let product_1 = {
+            id: 1,
+            name: 'prod 1',
+            price: 100
+        };
+        let product_2 = {
+            id: 2,
+            name: 'prod 2',
+            price: 10
+        };
+        let product_3 = {
+            id: 3,
+            name: 'prod 3',
+            price: 1000
+        }
+
+        let basket = {
+            goods: [
+                product_1,
+                product_2,
+                product_3
+            ],
+            calcBasketPrice: function () {
+                let result = 0;
+                for (let product of this.goods) {
+                    result += product.price;
+                }
+                return result;
+            }
+        }
+
+        showBasket(basket);
+
+        /**
+         * Вывод корзины на страничку
+         * @param (object) basket - объект корзины с товарами
+        */        
+        function showBasket(basket) {
+            const elBasket = document.querySelector(".basket");
+            elBasket.textContent = 
+                basket.goods.length
+                ? `В корзине: ${basket.goods.length} товаров на сумму ${basket.calcBasketPrice()} рублей`
+                : 'Корзина пуста'
+        }
+
+    </script>
+</body>
+</html>
