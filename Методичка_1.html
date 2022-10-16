@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методичка 1</title>
+</head>
+<body>
+    <!-- 
+    Продолжаем реализовывать модуль корзины:
+    a. Добавлять в объект корзины выбранные товары по клику на кнопке «Купить» 
+    без перезагрузки страницы;
+    b. Привязать к событию покупки товара пересчет корзины и 
+    обновление ее внешнего вида
+    -->
+    
+    <p></p><div class="basket"></div></p>
+    <p>Каталг товаров:</p>
+    <div class="catalog" id="catalog"></div>
+
+    <script>
+        "use strict";
+
+        let product_1 = {
+            id: 1,
+            name: 'prod 1',
+            price: 100
+        };
+        let product_2 = {
+            id: 2,
+            name: 'prod 2',
+            price: 10
+        };
+        let product_3 = {
+            id: 3,
+            name: 'prod 3',
+            price: 1000
+        }
+
+        let basket = {
+            goods: [
+            ],
+            calcBasketPrice: function () {
+                let result = 0;
+                for (let product of this.goods) {
+                    result += product.price;
+                }
+                return result;
+            }
+        }
+
+        const products = [];
+        products.push(product_1);
+        products.push(product_2);
+        products.push(product_3);
+
+        showBasket(basket);
+        showCatalog(products);
+
+
+        /**
+         * Вывод корзины на страничку
+         * @param (object) basket - объект корзины с товарами
+        */        
+        function showBasket(basket) {
+            const elBasket = document.querySelector(".basket");
+            elBasket.textContent = 
+                basket.goods.length
+                ? `В корзине: ${basket.goods.length} товаров на сумму ${basket.calcBasketPrice()} рублей`
+                : 'Корзина пуста'
+        }
+
+        /**
+         * Вы вести на страничку содержимое каталога
+         * @param (Array) products - массив продуктов
+        */
+        function showCatalog(products) {
+            const elCatalog = document.getElementById("catalog")
+            elCatalog.style.borderCollapse = ('collapse');
+
+            let elProduct;
+            elProduct = document.createElement('div');
+            elProduct.style.display = 'flex';
+            elProduct.style.display = 'table-row';
+
+            let elAttribute;
+            elAttribute = document.createElement('div');
+            elAttribute.style.display = 'table-cell';
+            elAttribute.style.border = '1px solid grey';
+            elAttribute.style.boxSizing = 'border-box';
+            elAttribute.style.padding = '5px';
+
+            let elProductTmp = elProduct.cloneNode();
+            let elAttributeTmp = elAttribute.cloneNode();
+
+            let elBtn = document.createElement('input');
+            elBtn.type = 'button';
+            elBtn.value = 'Купить';
+
+            // формируем заголовок
+            elAttributeTmp.textContent = "id";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Название";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Цена";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elProductTmp.appendChild(elAttributeTmp);
+            elCatalog.appendChild(elProductTmp);
+            ////
+
+            for (let product of products) {
+                elProductTmp = elProduct.cloneNode();
+                elProductTmp.addEventListener('click', putPruductToBasket);
+                for (let atribute in product) {
+                    elAttributeTmp = elAttribute.cloneNode(true);
+                    elAttributeTmp.textContent = product[atribute]
+                    elProductTmp.appendChild(elAttributeTmp);
+                }
+                elAttributeTmp = elAttribute.cloneNode();
+                elAttributeTmp.appendChild(elBtn.cloneNode());
+                
+                elProductTmp.appendChild(elAttributeTmp);
+                elCatalog.appendChild(elProductTmp);
+            }
+        }
+
+        /**
+         * Добавить товар в корзину
+         * @param (Object) event - объект события
+        */
+        function putPruductToBasket(event) {
+            if (event.target.type === 'button') {
+                const selectedItem = this.childNodes[0].textContent;
+                const product = products.find(el => el.id === +selectedItem);
+                basket.goods.push(product);
+                showBasket(basket);
+                console.log(basket);
+            }
+        }
+    </script>
+</body>
+</html>
