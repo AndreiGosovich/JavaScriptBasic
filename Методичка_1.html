@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методичка 1</title>
+
+    <style>
+        .modalImg {
+            margin: auto;
+            width: 50%;
+            max-width: 700px;
+            display: none;
+        }
+
+        .modalImg.visible {
+            display: block;
+        }
+
+        .modalWindow {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            margin: 0 auto;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            background-color: rgba(0,0,0,0.9);
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .closeImg {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .closeImg:hover,
+        .clcloseImgose:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- 
+    Реализовать страницу корзины:
+    a. Добавить возможность не только смотреть состав корзины, 
+    но и редактировать его, обновляя общую стоимость 
+    или выводя сообщение «Корзина пуста»
+    -->
+    
+    <p><div class="basket"></div></p>
+    <p>Каталг товаров:</p>
+    <div class="catalog" id="catalog"></div>
+
+    <div class="modalWindow">
+        <span class="closeImg">&times;</span>
+        <div class="imgContainer"></div>
+        <input type="button" class="prevImg" value="Предыдущая">
+        <input type="button" class="nextImg" value="Следующая">
+    </div>
+
+    <script>
+        "use strict";
+
+        let product_1 = {
+            id: 1,
+            name: 'prod 1',
+            price: 100,
+            imgs: [
+                'https://dnd.dragonmag.com/wp-content/uploads/sites/587/2020/04/DM3_80s_CA_RD_01.jpg',
+                'https://e7.pngegg.com/pngimages/328/996/png-clipart-kevin-the-minion-minions-jerry-the-minion-desktop-wallpaper-material.png',
+                'https://searchthisweb.com/wallpaper/minions_3840x2160_8dhmn.jpg'
+            ]
+        };
+        let product_2 = {
+            id: 2,
+            name: 'prod 2',
+            price: 10,
+            imgs: [],
+        };
+        let product_3 = {
+            id: 3,
+            name: 'prod 3',
+            price: 1000,
+            imgs: [
+                'http://clipart-library.com/img1/1486986.jpg',
+            ]
+        }
+
+        let basket = {
+            goods: [
+            ],
+            calcBasketPrice: function () {
+                let result = 0;
+                for (let product of this.goods) {
+                    result += product.price * product.count;
+                }
+                return result;
+            }
+        }
+
+        const products = [];
+        products.push(product_1);
+        products.push(product_2);
+        products.push(product_3);
+
+        showBasket(basket);
+        showCatalog(products);
+
+        /**
+         * Вывод корзины на страничку
+         * @param (object) basket - объект корзины с товарами
+        */        
+        function showBasket(basket) {
+            const elBasket = document.querySelector(".basket");
+            let elBasketTable = document.querySelector('table');
+
+            if (basket.goods.length){
+                elBasket.textContent = `В корзине: ${basket.goods.length} товаров на сумму ${basket.calcBasketPrice()} рублей`
+            } else {
+                elBasket.textContent = 'Корзина пуста';
+                if (elBasketTable) elBasketTable.remove();
+                return;
+            }
+        
+            if (!elBasketTable) {
+                elBasketTable = document.createElement('table');
+                elBasketTable.insertAdjacentHTML('afterbegin', `<caption>Состав корзины</caption>`);
+            } else {
+                elBasketTable.querySelector('tbody').remove();
+            }
+
+            let strTableBody = "<tbody>";
+            strTableBody += '<th>id</th><th>Название</th><th>Количество</th><th>Цена</th><th></th>';
+            for (let product of basket.goods) {
+                strTableBody += '<tr>';
+                strTableBody += `<td>${product.id}</td>`;
+                strTableBody += `<td>${product.name}</td>`;
+                strTableBody += `<td>${product.count}</td>`;
+                strTableBody += `<td>${Number(product.price * product.count).toFixed(2)}</td>`;
+                strTableBody += `<td><input type='button' class='removeBtn' value= 'Удалить'></input></td>`;
+                strTableBody += '</tr>';
+            }
+
+            strTableBody += "</tbody>";
+            elBasketTable.insertAdjacentHTML('beforeend', strTableBody);
+
+            for (let elTr of elBasketTable.querySelectorAll('tr')){
+                elTr.addEventListener('click', removeProductFromBasket)
+            }
+
+            elBasket.after(elBasketTable);
+        }
+
+
+        /**
+         * Удалить элемент из корзины по клику мышки на кнопке Удалить
+         * @param (MouseClickEvent) event - событие клика мышки.
+         */ 
+        function removeProductFromBasket(event) {
+            if (event.target.classList.contains('removeBtn')) {
+
+                const idxOfRemovedProd = basket.goods.findIndex(el => el.id === +this.children[0].textContent);
+
+                console.log(idxOfRemovedProd);
+
+                basket.goods.splice(idxOfRemovedProd, 1);
+
+                showBasket(basket);
+            }
+        }
+
+        /**
+         * Вы вести на страничку содержимое каталога
+         * @param (Array) products - массив продуктов
+        */
+        function showCatalog(products) {
+            const elCatalog = document.getElementById("catalog")
+            elCatalog.style.borderCollapse = ('collapse');
+
+            let elProduct;
+            elProduct = document.createElement('div');
+            elProduct.style.display = 'flex';
+            elProduct.style.display = 'table-row';
+
+            let elAttribute;
+            elAttribute = document.createElement('div');
+            elAttribute.style.display = 'table-cell';
+            elAttribute.style.border = '1px solid grey';
+            elAttribute.style.boxSizing = 'border-box';
+            elAttribute.style.padding = '5px';
+
+            let elProductTmp = elProduct.cloneNode();
+            let elAttributeTmp = elAttribute.cloneNode();
+
+            let elBtn = document.createElement('input');
+            elBtn.type = 'button';
+            elBtn.className = 'btnAddToBasket';
+            elBtn.value = 'Купить';
+
+            const btnShowImgs = document.createElement('input');
+            btnShowImgs.type = 'button';
+            btnShowImgs.value = 'Посмотреть';
+            btnShowImgs.className = 'btnShowImgs';
+
+            // формируем заголовок
+            elAttributeTmp.textContent = "id";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Название";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Цена";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elAttributeTmp.textContent = "Изображение";
+            elProductTmp.appendChild(elAttributeTmp);
+            elAttributeTmp = elAttribute.cloneNode();
+            elProductTmp.appendChild(elAttributeTmp);
+            elCatalog.appendChild(elProductTmp);
+            ////
+
+            for (let product of products) {
+                elProductTmp = elProduct.cloneNode();
+                elProductTmp.addEventListener('click', putPruductToBasket);
+                elProductTmp.addEventListener('click', showImgsViewer);
+                for (let atribute in product) {
+                    elAttributeTmp = elAttribute.cloneNode(true);
+
+                    if (atribute === 'imgs' && product[atribute].length) {
+                        elAttributeTmp.appendChild(btnShowImgs.cloneNode());
+                    } else {
+                        elAttributeTmp.textContent = product[atribute];
+                    }
+                    elProductTmp.appendChild(elAttributeTmp);
+                }
+                elAttributeTmp = elAttribute.cloneNode();
+                elAttributeTmp.appendChild(elBtn.cloneNode());
+                
+                elProductTmp.appendChild(elAttributeTmp);
+                elCatalog.appendChild(elProductTmp);
+            }
+        }
+
+        /**
+         * Добавить товар в корзину
+         * @param (Object) event - объект события
+        */
+        function putPruductToBasket(event) {
+            if (event.target.className === 'btnAddToBasket') {
+                const selectedItem = this.children[0].textContent;
+                const product = products.find(el => el.id === +selectedItem);
+                const productInBasket = basket.goods.find(el => el.id === +selectedItem);
+
+                if (productInBasket){
+                    productInBasket.count += 1;
+                } else {
+                    basket.goods.push(product);
+                    basket.goods.at(-1).count = 1;
+                }
+                showBasket(basket);
+            }
+        }
+
+        /**
+         * Отобразить картинки товаров в модальном окне
+        */
+        function showImgsViewer(event) {
+            if (event.target.className === 'btnShowImgs') {
+                const selectedItem = this.children[0].textContent;
+                const product = products.find(el => el.id === +selectedItem);
+
+                const modalWindow = document.querySelector('.modalWindow');
+                const imgContainer = document.querySelector('.imgContainer');
+                
+
+                for (let img of product.imgs) {
+                    const elImg = document.createElement('img');
+                    elImg.className = 'modalImg';
+                    elImg.src = img;
+                    imgContainer.appendChild(elImg);
+                }
+
+                imgContainer.children[0].classList.add('visible');
+
+                modalWindow.querySelector('.prevImg').addEventListener('click', prevImg);
+                modalWindow.querySelector('.nextImg').addEventListener('click', nextImg);
+
+
+                modalWindow.querySelector('.closeImg').addEventListener('click', 
+                    event => {
+                        modalWindow.style.display = 'none';
+                        for (let img of imgContainer.children) img.remove();
+                    })
+                modalWindow.style.display = 'block';
+            }
+        }
+
+        /**
+         * Переключение на предыдущее изображение
+        */ 
+        function prevImg() {
+            const imgContainer = document.querySelector('.imgContainer');
+            for (let i = 0; i < imgContainer.children.length; i++) {
+                if (imgContainer.children[i].classList.contains('visible')) {
+                    imgContainer.children[i].classList.remove('visible');
+                    if (i === 0) {
+                        imgContainer.children[imgContainer.children.length - 1].classList.add('visible');
+                    } else {
+                        imgContainer.children[i - 1].classList.add('visible');
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        /**
+         * Переключение на следующее изображение
+        */ 
+        function nextImg() {
+            const imgContainer = document.querySelector('.imgContainer');
+            for (let i = 0; i < imgContainer.children.length; i++) {
+                if (imgContainer.children[i].classList.contains('visible')) {
+                    imgContainer.children[i].classList.remove('visible');
+                    if (i < imgContainer.children.length - 1) {
+                        imgContainer.children[i + 1].classList.add('visible');
+                    } else {
+                        imgContainer.children[0].classList.add('visible');
+                    }
+                    break;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
